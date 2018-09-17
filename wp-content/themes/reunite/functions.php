@@ -24,7 +24,7 @@ function custom_post_type() {
         'update_item'         => 'Update Film',
         'search_items'        => 'Search Film',
         'not_found'           => 'Not Found',
-        'not_found_in_trash'  => 'Not found in Trash', 'twentythirteen',
+        'not_found_in_trash'  => 'Not found in Trash',
     );
      
 // Set other options for Custom Post Type
@@ -216,7 +216,7 @@ function ticket_price() {
 function ticket_price_box_content( $post ) {
   wp_nonce_field( plugin_basename( __FILE__ ), 'ticket_price_box_content_nonce' );
   echo '<label for="ticket_price"></label>';
-  echo '<input type="number" id="product_price" name="product_price" placeholder="enter a price" required />';
+  echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="<?php echo esc_attr( get_post_meta( $post->ID, \'ticket_class \', true ) ); ?>" required />';
 }
 
 // Add Custom Metabox for Release Date
@@ -234,5 +234,5 @@ function release_date() {
 function release_date_box_content( $post ) {
   wp_nonce_field( plugin_basename( __FILE__ ), 'release_date_box_content_nonce' );
   echo '<label for="release_date"></label>';
-  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" required />';
+  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="<?php echo esc_attr( get_post_meta( $post->ID, \'release_date \', true ) ); ?>" required />';
 }
