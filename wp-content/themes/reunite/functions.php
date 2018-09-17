@@ -100,9 +100,69 @@ function create_taxonomies() {
 
   // Add a taxonomy like tags
   $labels = array(
+    'name'              => 'Actors',
+    'singular_name'     => 'Actor',
+    'search_items'      => 'Search Actors',
+    'all_items'         => 'All Actor',
+    'parent_item'       => null,
+    'parent_item_colon' => null,
+    'edit_item'         => 'Edit Actor',
+    'update_item'       => 'Update Actor',
+    'add_new_item'      => 'Add New Actor',
+    'new_item_name'     => 'New Actor',
+    'separate_items_with_commas' => 'Separate actors with commas',
+    'add_or_remove_items'        => 'Add or remove an Actor',
+    'choose_from_most_used'      => 'Choose from most used Actors',
+    'not_found'                  => 'Actors Not found',
+    'menu_name'         => 'Actors',
+  );
+
+  $args = array(
+    'hierarchical'      => false,
+    'labels'            => $labels,
+    'show_ui'           => true,
+    'show_admin_column' => true,
+    'query_var'         => true,
+    'rewrite'           => array( 'slug' => 'actor' ),
+  );
+
+  register_taxonomy('actor',array('films'),$args);
+
+  
+  $labels = array(
+    'name'              => 'Years',
+    'singular_name'     => 'Year',
+    'search_items'      => 'Search Years',
+    'all_items'         => 'All Years',
+    'parent_item'       => null,
+    'parent_item_colon' => null,
+    'edit_item'         => 'Edit Year',
+    'update_item'       => 'Update Year',
+    'add_new_item'      => 'Add New Year',
+    'new_item_name'     => 'New Year',
+    'separate_items_with_commas' => 'Separate years with commas',
+    'add_or_remove_items'        => 'Add or remove a Year',
+    'choose_from_most_used'      => 'Choose from most used Years',
+    'not_found'                  => 'Not found',
+    'menu_name'         => 'Years',
+  );
+
+  $args = array(
+    'hierarchical'      => false,
+    'labels'            => $labels,
+    'show_ui'           => true,
+    'show_admin_column' => true,
+    'query_var'         => true,
+    'rewrite'           => array( 'slug' => 'year' ),
+  );
+
+  register_taxonomy('year',array('films'),$args);
+
+
+  $labels = array(
     'name'                       => 'Countries',
     'singular_name'              => 'Country',
-    'search_items'               => 'Countrys',
+    'search_items'               => 'Countries',
     'popular_items'              => 'Popular Countries',
     'all_items'                  => 'All Countries',
     'parent_item'                => null,
@@ -138,3 +198,41 @@ function create_taxonomies() {
 */
  
 add_action( 'init', 'create_taxonomies', 0 );
+
+
+
+// Add Custom Metabox for Ticket Price
+add_action( 'add_meta_boxes', 'ticket_price' );
+function ticket_price() {
+    add_meta_box( 
+        'ticket_price',
+        __( 'Ticket Price', 'myplugin_textdomain' ),
+        'ticket_price_box_content',
+        'films',
+        'side',
+        'high'
+    );
+}
+function ticket_price_box_content( $post ) {
+  wp_nonce_field( plugin_basename( __FILE__ ), 'ticket_price_box_content_nonce' );
+  echo '<label for="ticket_price"></label>';
+  echo '<input type="number" id="product_price" name="product_price" placeholder="enter a price" required />';
+}
+
+// Add Custom Metabox for Release Date
+add_action( 'add_meta_boxes', 'release_date' );
+function release_date() {
+    add_meta_box( 
+        'release_date',
+        __( 'Release Date', 'myplugin_textdomain' ),
+        'release_date_box_content',
+        'films',
+        'side',
+        'high'
+    );
+}
+function release_date_box_content( $post ) {
+  wp_nonce_field( plugin_basename( __FILE__ ), 'release_date_box_content_nonce' );
+  echo '<label for="release_date"></label>';
+  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" required />';
+}
