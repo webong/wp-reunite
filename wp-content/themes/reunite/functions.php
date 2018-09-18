@@ -15,9 +15,13 @@ function custom_post_type() {
         'name'                => 'Films',
         'singular_name'       => 'Film',
         'menu_name'           => 'Films',
-        'parent_item_colon'   => 'Parent Film',
+        'name_admin_bar'      => 'Film',
+        'parent_item_colon'   => 'Parent Film:',
+        'archives'            => 'Film Archives',
+	     	'attributes'          => 'Film Attributes',
         'all_items'           => 'All Films',
         'view_item'           => 'View Film',
+        'view_items'          => 'View Films',
         'add_new_item'        => 'Add New Film',
         'add_new'             => 'Add New',
         'edit_item'           => 'Edit Film',
@@ -25,6 +29,12 @@ function custom_post_type() {
         'search_items'        => 'Search Film',
         'not_found'           => 'Not Found',
         'not_found_in_trash'  => 'Not found in Trash',
+        'featured_image'        => 'Featured Image',
+        'set_featured_image'    => 'Set featured image',
+     		'remove_featured_image' => 'Remove featured image',
+    		'items_list_navigation' => 'Films list navigation',
+     		'filter_items_list'     => 'Filter films list',
+ 
     );
      
 // Set other options for Custom Post Type
@@ -34,9 +44,9 @@ function custom_post_type() {
         'description'         => 'Film Gallery',
         'labels'              => $labels,
         // Features this CPT supports in Post Editor
-        'supports'            => array( 'title', 'editor', 'custom-fields', 'author', 'thumbnail', 'comments', 'revisions', ),
+        'supports'            => array( 'title', 'editor',  'thumbnail', 'custom-fields', ),
         // You can associate this CPT with a taxonomy or custom taxonomy. 
-        // 'taxonomies'          => array( 'genres', 'country', 'year', 'actor' ),
+        'taxonomies'          => array( 'genre', 'country', 'year', 'actor' ),
         /* A hierarchical CPT is like Pages and can have
         * Parent and child items. A non-hierarchical CPT
         * is like Posts.
@@ -52,10 +62,8 @@ function custom_post_type() {
         'has_archive'         => true,
         'exclude_from_search' => false,
         'publicly_queryable'  => true,
-        'rewrite'             => array( 'slug' => 'films' ),
+        'rewrite'             => array( 'slug' => 'films', 'with_front' => true, 'pages' => true, ),
         'capability_type'     => 'post',
-        'query_var'           => true,
-
     );
      
     // Registering your Custom Post Type
@@ -69,6 +77,14 @@ function custom_post_type() {
 */
  
 add_action( 'init', 'custom_post_type', 0 );
+
+register_activation_hook( __FILE__, 'your_active_hook' );
+
+function your_active_hook() {
+    custom_post_type();
+    flush_rewrite_rules();
+}
+
 
 function create_taxonomies() {
 
@@ -214,7 +230,7 @@ function ticket_price() {
     );
 }
 function ticket_price_box_content( $post ) {
-  wp_nonce_field( plugin_basename( __FILE__ ), 'ticket_price_box_content_nonce' );
+  wp_nonce_field( basename( __FILE__ ), 'custom_meta_box_nonce' );
   $value = get_post_meta($post->ID, 'ticket_price', true);
   echo '<label for="ticket_price"></label>';
   echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="' . selected($value, 'else') .'" required />';
@@ -233,7 +249,7 @@ function ticket_price_box_save($post_id)
       if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
     return;
 
-    if ( !wp_verify_nonce( $_POST['ticket_price_box_content_nonce'], plugin_basename( __FILE__ ) ) )
+    if ( !wp_verify_nonce( $_POST['custom_meta_box_nonce'], basename( __FILE__ ) ) )
     return;
 
     if ( 'page' == $_POST['post_type'] ) {
@@ -243,8 +259,8 @@ function ticket_price_box_save($post_id)
       if ( !current_user_can( 'edit_post', $post_id ) )
       return;
     }
-    $product_price = $_POST['ticket_price'];
-    update_post_meta( $post_id, 'ticket_price', $product_price );
+    $ticket_price = $_POST['ticket_price'];
+    update_post_meta( $post_id, 'ticket_price', $ticket_price );
 }
 add_action('save_post', 'ticket_price_box_save');
 
@@ -262,8 +278,8 @@ function release_date() {
     );
 }
 function release_date_box_content( $post ) {
-  wp_nonce_field( plugin_basename( __FILE__ ), 'release_date_box_content_nonce' );
-    $value = get_post_meta($post->ID, 'release_date', true);
+  wp_nonce_field( basename( __FILE__ ), 'custom_meta_box_nonce' );
+  $value = get_post_meta($post->ID, 'release_date', true);
   echo '<label for="release_date"></label>';
   echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="' . selected($value, 'else') .'" required />';
 }
@@ -273,7 +289,7 @@ function release_date_box_save($post_id)
       if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
     return;
 
-    if ( !wp_verify_nonce( $_POST['release_date_box_content_nonce'], plugin_basename( __FILE__ ) ) )
+    if ( !wp_verify_nonce( $_POST['custom_meta_box_nonce'], basename( __FILE__ ) ) )
     return;
 
     if ( 'page' == $_POST['post_type'] ) {
@@ -283,8 +299,8 @@ function release_date_box_save($post_id)
       if ( !current_user_can( 'edit_post', $post_id ) )
       return;
     }
-    $product_price = $_POST['release_date'];
-    update_post_meta( $post_id, 'release_date', $product_price );
+    $release_date = $_POST['release_date'];
+    update_post_meta( $post_id, 'release_date', $release_date );
 }
 add_action('save_post', 'release_date_box_save');
 
@@ -296,3 +312,12 @@ function add_films_to_query( $query ) {
         $query->set( 'post_type', array( 'post', 'films' ) );
     return $query;
 }
+
+// You need to flush the rewrite rules once using the after_switch_theme hook. 
+// This will make sure that the rewrite rules get flushed automatically after the user 
+// has activated the Theme.
+
+function theme_prefix_rewrite_flush() {
+    flush_rewrite_rules();
+}
+add_action( 'after_switch_theme', 'theme_prefix_rewrite_flush' );
