@@ -76,13 +76,20 @@
               $date  = get_post_meta( get_the_ID(), 'release_date', true );
               $genre  = wp_get_post_terms( get_the_ID(), 'genre', array("fields" => "names") );
               $country  = wp_get_post_terms( get_the_ID(), 'country', array("fields" => "names") );
-              echo 'Ticket Price : '. '' .$price;
+            //   echo 'Ticket Price : '. '' .$price;
+            //   echo '<br>';
+            //   echo 'Release Date : '. '' .$date;
+            //   echo '<br>';
+            //   echo 'Genre : '. '' .$genre[0];
+            //   echo 'Country : '. '' .$country[0];
               echo '<br>';
-              echo 'Release Date : '. '' .$date;
-              echo '<br>';
-              echo 'Genre : '. '' .$genre[0];
-              echo '<br>';
-              echo 'Country : '. '' .$country[0];
+              echo  '<ul class="nav nav-pills" role="tablist">' ;
+              echo  '<li role="presentation"><a href="#">Ticket Price <span class="badge">' . $price .'</span></a></li>';
+              echo  '<li role="presentation"><a href="#">Release Date <span class="badge">' . $date .'</span></a></li>';
+              echo  '<li role="presentation"><a href="#">Genre <span class="badge">' . $genre[0] .'</span></a></li>';
+              echo  '<li role="presentation"><a href="#">Country <span class="badge">' . $country[0] .'</span></a></li>';
+              echo '</ul>';
+
 
               //var_dump($genre);
               

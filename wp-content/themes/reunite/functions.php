@@ -333,9 +333,9 @@ function last_five_films_shortcode( $atts ) {
         'orderby' => 'title',
     ) );
     if ( $films->have_posts() ) { ?>
-        <ul class="film-listing">
+        <ul class="list-group">
             <?php while ( $films->have_posts() ) : $films->the_post(); ?>
-            <li id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+            <li class="list-group-item" id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
             </li>
             <?php endwhile;
