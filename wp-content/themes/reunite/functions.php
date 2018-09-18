@@ -321,3 +321,30 @@ function theme_prefix_rewrite_flush() {
     flush_rewrite_rules();
 }
 add_action( 'after_switch_theme', 'theme_prefix_rewrite_flush' );
+
+// create shortcode to list last 5 films
+add_shortcode( 'five-films', 'last_five_films_shortcode' );
+function last_five_films_shortcode( $atts ) {
+    ob_start();
+    $films = new WP_Query( array(
+        'post_type' => 'films',
+        'posts_per_page' => 5,
+        'order' => 'ASC',
+        'orderby' => 'title',
+    ) );
+    if ( $films->have_posts() ) { ?>
+        <ul class="film-listing">
+            <?php while ( $films->have_posts() ) : $films->the_post(); ?>
+            <li id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+            </li>
+            <?php endwhile;
+            wp_reset_postdata(); ?>
+        </ul>
+    <?php $myvariable = ob_get_clean();
+    return $myvariable;
+    }else{ ?>
+       <p>No posts found.</p>
+    <?php 
+    }
+}
