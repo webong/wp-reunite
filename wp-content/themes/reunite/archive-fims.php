@@ -16,8 +16,14 @@
         ?>
           <h1><?php the_title() ?></h1>
           <div class='content'>
-            <?php the_content() ?>
-             <?php $price = get_post_meta( get_the_ID(), 'ticket_price', true ); 
+             <?php the_content() ?>
+             <?php 
+               $price = get_post_meta( get_the_ID(), 'ticket_price', true ); 
+               echo $price;
+             ?>
+             <?php
+               $date = get_post_meta( get_the_ID(), 'release_date', true ); 
+               echo $date;
              ?>
             
           </div>

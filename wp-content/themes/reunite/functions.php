@@ -34,7 +34,7 @@ function custom_post_type() {
         'description'         => 'Film Gallery',
         'labels'              => $labels,
         // Features this CPT supports in Post Editor
-        'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'revisions', 'custom-fields', ),
+        'supports'            => array( 'title', 'editor', 'custom-fields', 'author', 'thumbnail', 'comments', 'revisions', ),
         // You can associate this CPT with a taxonomy or custom taxonomy. 
         // 'taxonomies'          => array( 'genres', 'country', 'year', 'actor' ),
         /* A hierarchical CPT is like Pages and can have
@@ -215,9 +215,39 @@ function ticket_price() {
 }
 function ticket_price_box_content( $post ) {
   wp_nonce_field( plugin_basename( __FILE__ ), 'ticket_price_box_content_nonce' );
+  $value = get_post_meta($post->ID, 'ticket_price', true);
   echo '<label for="ticket_price"></label>';
-  echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="<?php echo esc_attr( get_post_meta( $post->ID, \'ticket_class \', true ) ); ?>" required />';
+  echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="' . selected($value, 'else') .'" required />';
 }
+
+function ticket_price_box_save($post_id)
+{
+    // if (array_key_exists('ticket_price', $_POST)) {
+    //     update_post_meta(
+    //         $post_id,
+    //         'ticket_price',
+    //         $_POST['ticket_price']
+    //     );
+    // }
+
+      if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+    return;
+
+    if ( !wp_verify_nonce( $_POST['ticket_price_box_content_nonce'], plugin_basename( __FILE__ ) ) )
+    return;
+
+    if ( 'page' == $_POST['post_type'] ) {
+      if ( !current_user_can( 'edit_page', $post_id ) )
+      return;
+    } else {
+      if ( !current_user_can( 'edit_post', $post_id ) )
+      return;
+    }
+    $product_price = $_POST['ticket_price'];
+    update_post_meta( $post_id, 'ticket_price', $product_price );
+}
+add_action('save_post', 'ticket_price_box_save');
+
 
 // Add Custom Metabox for Release Date
 add_action( 'add_meta_boxes', 'release_date' );
@@ -233,6 +263,36 @@ function release_date() {
 }
 function release_date_box_content( $post ) {
   wp_nonce_field( plugin_basename( __FILE__ ), 'release_date_box_content_nonce' );
+    $value = get_post_meta($post->ID, 'release_date', true);
   echo '<label for="release_date"></label>';
-  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="<?php echo esc_attr( get_post_meta( $post->ID, \'release_date \', true ) ); ?>" required />';
+  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="' . selected($value, 'else') .'" required />';
+}
+
+function release_date_box_save($post_id)
+{
+      if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+    return;
+
+    if ( !wp_verify_nonce( $_POST['release_date_box_content_nonce'], plugin_basename( __FILE__ ) ) )
+    return;
+
+    if ( 'page' == $_POST['post_type'] ) {
+      if ( !current_user_can( 'edit_page', $post_id ) )
+      return;
+    } else {
+      if ( !current_user_can( 'edit_post', $post_id ) )
+      return;
+    }
+    $product_price = $_POST['release_date'];
+    update_post_meta( $post_id, 'release_date', $product_price );
+}
+add_action('save_post', 'release_date_box_save');
+
+//Displaying Custom Post on Front Page
+add_action( 'pre_get_posts', 'add_films_to_query' );
+ 
+function add_films_to_query( $query ) {
+    if ( is_home() && $query->is_main_query() )
+        $query->set( 'post_type', array( 'post', 'films' ) );
+    return $query;
 }
