@@ -233,7 +233,7 @@ function ticket_price_box_content( $post ) {
   wp_nonce_field( basename( __FILE__ ), 'custom_meta_box_nonce' );
   $value = get_post_meta($post->ID, 'ticket_price', true);
   echo '<label for="ticket_price"></label>';
-  echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="' . selected($value, 'else') .'" required />';
+  echo '<input type="number" id="ticket_price" name="ticket_price" placeholder="enter a price" value="' . selected($value, 'else') .'" />';
 }
 
 function ticket_price_box_save($post_id)
@@ -281,7 +281,7 @@ function release_date_box_content( $post ) {
   wp_nonce_field( basename( __FILE__ ), 'custom_meta_box_nonce' );
   $value = get_post_meta($post->ID, 'release_date', true);
   echo '<label for="release_date"></label>';
-  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="' . selected($value, 'else') .'" required />';
+  echo '<input type="date" id="release_date" name="release_date" placeholder="enter a date" value="' . selected($value, 'else') .'" />';
 }
 
 function release_date_box_save($post_id)

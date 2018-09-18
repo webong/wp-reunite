@@ -44,26 +44,9 @@
 					 * If you want to override this in a child theme, then include a file
 					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 					 */
-          get_template_part( 'content', get_post_format() );
+          get_template_part( 'content', 'films' );
 				?>
         
-        <div class="entry-content">
-           <?php  
-              $price = get_post_meta( get_the_ID(), 'ticket_price', true );
-              $date  = get_post_meta( get_the_ID(), 'release_date', true );
-              echo 'Ticket Price : '. '' .$price;
-              echo '<br>';
-              echo 'Release Date : '. '' .$date;
-
-              // $custom = get_post_custom();
-              //   foreach($custom as $key => $value) {
-              //       echo $key.': '.$value.'<br />';
-              //   }
-              // // $key_name = get_post_custom_values($key = '');
-              // // echo $key_name[0];
-
-           ?>
-        </div>
 			<?php endwhile; ?>
 
 			<?php unite_paging_nav(); ?>
